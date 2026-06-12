@@ -2,12 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const btn = document.getElementById("btn");
     
 
-    btn.addEventListener("click", function() {
-        alert("Button Clicked");
-    });
-    window.addEventListener("click", function() {
-        alert("Window Clicked");
-    });
+
 });
 
 
