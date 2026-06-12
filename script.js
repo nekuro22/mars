@@ -217,41 +217,69 @@ const atmosphere = new THREE.Mesh(
 );
 root.add(atmosphere);
 
-const plasmaRing = new THREE.Mesh(
-    new THREE.TorusGeometry(2.35, 0.025, 18, 240),
-    new THREE.MeshBasicMaterial({
-        color: 0xff3b7d,
-        transparent: true,
-        opacity: 0,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-    })
-);
-plasmaRing.rotation.x = Math.PI / 2.8;
-plasmaRing.rotation.y = Math.PI / 8;
-root.add(plasmaRing);
+const plasmaGroup = new THREE.Group();
+plasmaGroup.rotation.x = -0.12;
+root.add(plasmaGroup);
 
-const fieldShell = new THREE.Mesh(
-    new THREE.TorusGeometry(2.1, 0.006, 10, 220),
+const plasmaTorus = new THREE.Mesh(
+    new THREE.TorusGeometry(2.34, 0.48, 48, 220),
     new THREE.MeshBasicMaterial({
-        color: 0x50e6ff,
+        color: 0x0a92ff,
         transparent: true,
         opacity: 0,
         blending: THREE.AdditiveBlending,
         depthWrite: false
     })
 );
-fieldShell.rotation.x = Math.PI / 2;
-fieldShell.scale.set(1, 1, 1.35);
-root.add(fieldShell);
+plasmaTorus.scale.y = 0.72;
+plasmaGroup.add(plasmaTorus);
+
+const plasmaCore = new THREE.Mesh(
+    new THREE.TorusGeometry(2.34, 0.18, 32, 220),
+    new THREE.MeshBasicMaterial({
+        color: 0x27e6ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    })
+);
+plasmaCore.scale.y = 0.72;
+plasmaGroup.add(plasmaCore);
+
+const fieldLineMaterials = [];
+function addFieldLine(width, height, z, color = 0x22d8c7) {
+    const points = [];
+    for (let i = 0; i <= 180; i++) {
+        const t = (i / 180) * Math.PI * 2;
+        points.push(new THREE.Vector3(Math.cos(t) * width, Math.sin(t) * height, z));
+    }
+    const material = new THREE.LineBasicMaterial({
+        color,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
+    fieldLineMaterials.push(material);
+    plasmaGroup.add(line);
+}
+
+for (let i = 0; i < 7; i++) {
+    addFieldLine(2.55 + i * 0.34, 1.05 + i * 0.25, -0.55 - i * 0.02);
+    addFieldLine(2.55 + i * 0.34, 1.05 + i * 0.25, 0.55 + i * 0.02);
+}
 
 const particleCount = 900;
 const particlePositions = new Float32Array(particleCount * 3);
 for (let i = 0; i < particleCount; i++) {
-    const angle = (i / particleCount) * Math.PI * 2;
-    const radius = 2.35 + (Math.random() - 0.5) * 0.18;
+    const angle = Math.random() * Math.PI * 2;
+    const tubeAngle = Math.random() * Math.PI * 2;
+    const tubeRadius = Math.sqrt(Math.random()) * 0.44;
+    const radius = 2.34 + Math.cos(tubeAngle) * tubeRadius;
     particlePositions[i * 3] = Math.cos(angle) * radius;
-    particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 0.12;
+    particlePositions[i * 3 + 1] = Math.sin(tubeAngle) * tubeRadius;
     particlePositions[i * 3 + 2] = Math.sin(angle) * radius;
 }
 
@@ -260,16 +288,92 @@ particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions
 const plasmaParticles = new THREE.Points(
     particleGeo,
     new THREE.PointsMaterial({
-        color: 0xff7aa4,
-        size: 0.035,
+        color: 0x7ff8ff,
+        size: 0.024,
         transparent: true,
         opacity: 0,
         blending: THREE.AdditiveBlending,
         depthWrite: false
     })
 );
-plasmaParticles.rotation.copy(plasmaRing.rotation);
-root.add(plasmaParticles);
+plasmaParticles.scale.y = 0.72;
+plasmaGroup.add(plasmaParticles);
+
+function makeMoon(radius, color, seed) {
+    const moon = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(radius, 3),
+        new THREE.MeshStandardMaterial({
+            color,
+            roughness: 0.96,
+            metalness: 0.0
+        })
+    );
+    const rand = seededRandom(seed);
+    for (let i = 0; i < moon.geometry.attributes.position.count; i++) {
+        const offset = 0.88 + rand() * 0.24;
+        moon.geometry.attributes.position.setXYZ(
+            i,
+            moon.geometry.attributes.position.getX(i) * offset,
+            moon.geometry.attributes.position.getY(i) * offset,
+            moon.geometry.attributes.position.getZ(i) * offset
+        );
+    }
+    moon.geometry.computeVertexNormals();
+    return moon;
+}
+
+const moonGroup = new THREE.Group();
+root.add(moonGroup);
+
+const phobosOrbit = new THREE.Group();
+phobosOrbit.rotation.x = plasmaGroup.rotation.x;
+moonGroup.add(phobosOrbit);
+
+const phobos = makeMoon(0.105, 0x9b8d80, 77);
+phobos.position.set(2.34, 0, 0.1);
+phobos.scale.set(1.55, 0.9, 1.05);
+phobosOrbit.add(phobos);
+
+const phobosGlow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.17, 32, 32),
+    new THREE.MeshBasicMaterial({
+        color: 0x68f7ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    })
+);
+phobosGlow.position.copy(phobos.position);
+phobosOrbit.add(phobosGlow);
+
+const plumePositions = new Float32Array(240 * 3);
+for (let i = 0; i < 240; i++) {
+    plumePositions[i * 3] = phobos.position.x - Math.random() * 0.55;
+    plumePositions[i * 3 + 1] = (Math.random() - 0.5) * 0.18;
+    plumePositions[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
+}
+const phobosPlume = new THREE.Points(
+    new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(plumePositions, 3)),
+    new THREE.PointsMaterial({
+        color: 0x8afcff,
+        size: 0.045,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    })
+);
+phobosOrbit.add(phobosPlume);
+
+const deimosOrbit = new THREE.Group();
+deimosOrbit.rotation.x = 0.24;
+moonGroup.add(deimosOrbit);
+
+const deimos = makeMoon(0.075, 0x8a8178, 91);
+deimos.position.set(3.35, 0, -0.35);
+deimos.scale.set(1.35, 0.8, 1.0);
+deimosOrbit.add(deimos);
 
 function makeStars() {
     const count = 1200;
@@ -295,6 +399,7 @@ function makeStars() {
 scene.add(makeStars());
 
 let terraformValue = 0;
+let plasmaTorusBaseOpacity = 0;
 let targetRotationX = -0.16;
 let targetRotationY = 0.34;
 let isDragging = false;
@@ -312,9 +417,15 @@ function updateStage(value) {
     atmosphere.material.opacity = mix(0.02, 0.23, airT);
     clouds.material.opacity = mix(0, 0.46, smoothstep(0.75, 3, value));
     green.material.opacity = mix(0, 0.74, finalT);
-    plasmaRing.material.opacity = mix(0, 0.94, fieldT) * (1 - finalT * 0.18);
-    plasmaParticles.material.opacity = mix(0, 0.82, fieldT);
-    fieldShell.material.opacity = mix(0, 0.28, fieldT);
+    plasmaTorusBaseOpacity = mix(0, 0.2, fieldT) * (1 - finalT * 0.1);
+    plasmaTorus.material.opacity = plasmaTorusBaseOpacity;
+    plasmaCore.material.opacity = mix(0, 0.18, fieldT) * (1 - finalT * 0.1);
+    plasmaParticles.material.opacity = mix(0, 0.28, fieldT);
+    phobosGlow.material.opacity = mix(0, 0.58, fieldT);
+    phobosPlume.material.opacity = mix(0, 0.88, fieldT);
+    fieldLineMaterials.forEach((material, index) => {
+        material.opacity = mix(0, 0.16 + (index % 2) * 0.05, fieldT);
+    });
     marsMaterial.color.setRGB(
         mix(1, 0.72, oceanT * 0.35 + finalT * 0.2),
         mix(1, 0.86, finalT * 0.36),
@@ -378,9 +489,18 @@ function animate() {
     ocean.rotation.y += 0.0012;
     green.rotation.y += 0.0012;
     clouds.rotation.y += 0.0019;
-    plasmaRing.rotation.z = elapsed * 0.16;
+    plasmaGroup.rotation.z = Math.sin(elapsed * 0.28) * 0.035;
+    plasmaTorus.material.opacity = plasmaTorusBaseOpacity * (0.88 + Math.sin(elapsed * 2.4) * 0.08);
+    plasmaCore.rotation.z = elapsed * 0.08;
     plasmaParticles.rotation.z = elapsed * 0.38;
-    fieldShell.rotation.z = elapsed * -0.08;
+    phobosOrbit.rotation.z = elapsed * 0.42;
+    phobos.rotation.x += 0.01;
+    phobos.rotation.y += 0.014;
+    phobosGlow.scale.setScalar(1 + Math.sin(elapsed * 4.2) * 0.16);
+    phobosPlume.rotation.z = Math.sin(elapsed * 3.2) * 0.18;
+    deimosOrbit.rotation.z = elapsed * 0.12;
+    deimos.rotation.x += 0.004;
+    deimos.rotation.y += 0.006;
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
