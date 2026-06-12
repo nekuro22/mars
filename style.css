@@ -1,5 +1,5 @@
 h1{
-    color: black !important;
+    color: rgb(255, 255, 255) !important;
     padding: 20px;
     margin: 20px;
     align-items: center;
@@ -46,3 +46,17 @@ button:hover{
     text-align: center;
     text-font-size: 50px;
 }
+
+body{
+    background-color: #343131;
+}
+h2{
+    color: white;
+    padding: 20px;
+    margin: 20px;
+    align-items: center;
+    text-align: center;
+    text-font-size: 50px;
+}
+
+
