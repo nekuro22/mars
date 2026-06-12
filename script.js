@@ -383,6 +383,8 @@ let terraformValue = 0;
 let plasmaTorusBaseOpacity = 0;
 let targetRotationX = -0.16;
 let targetRotationY = 0.34;
+let cameraDistance = 6.4;
+let targetCameraDistance = 6.4;
 let isDragging = false;
 let lastPointer = { x: 0, y: 0 };
 
@@ -427,7 +429,10 @@ function resize() {
     const height = canvas.clientHeight;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    camera.position.z = width < 720 ? 7.5 : 6.4;
+    const minDistance = width < 720 ? 5.8 : 4.6;
+    const maxDistance = width < 720 ? 13.5 : 11.5;
+    targetCameraDistance = Math.min(maxDistance, Math.max(minDistance, targetCameraDistance));
+    cameraDistance = Math.min(maxDistance, Math.max(minDistance, cameraDistance));
     camera.updateProjectionMatrix();
 }
 
@@ -457,6 +462,15 @@ canvas.addEventListener("pointerup", (event) => {
     canvas.releasePointerCapture(event.pointerId);
 });
 
+canvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    const width = canvas.clientWidth;
+    const minDistance = width < 720 ? 5.8 : 4.6;
+    const maxDistance = width < 720 ? 13.5 : 11.5;
+    targetCameraDistance += event.deltaY * 0.006;
+    targetCameraDistance = Math.min(maxDistance, Math.max(minDistance, targetCameraDistance));
+}, { passive: false });
+
 window.addEventListener("resize", resize);
 
 const clock = new THREE.Clock();
@@ -465,6 +479,8 @@ function animate() {
     const elapsed = clock.getElapsedTime();
     root.rotation.x += (targetRotationX - root.rotation.x) * 0.06;
     root.rotation.y += (targetRotationY - root.rotation.y) * 0.06;
+    cameraDistance += (targetCameraDistance - cameraDistance) * 0.12;
+    camera.position.z = cameraDistance;
     mars.rotation.y += 0.0012;
     ocean.rotation.y += 0.0012;
     green.rotation.y += 0.0012;
