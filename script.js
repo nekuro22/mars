@@ -347,25 +347,6 @@ const phobosGlow = new THREE.Mesh(
 phobosGlow.position.copy(phobos.position);
 phobosOrbit.add(phobosGlow);
 
-const plumePositions = new Float32Array(240 * 3);
-for (let i = 0; i < 240; i++) {
-    plumePositions[i * 3] = phobos.position.x - Math.random() * 0.55;
-    plumePositions[i * 3 + 1] = (Math.random() - 0.5) * 0.18;
-    plumePositions[i * 3 + 2] = (Math.random() - 0.5) * 0.18;
-}
-const phobosPlume = new THREE.Points(
-    new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(plumePositions, 3)),
-    new THREE.PointsMaterial({
-        color: 0x8afcff,
-        size: 0.045,
-        transparent: true,
-        opacity: 0,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-    })
-);
-phobosOrbit.add(phobosPlume);
-
 const deimosOrbit = new THREE.Group();
 deimosOrbit.rotation.x = 0.24;
 moonGroup.add(deimosOrbit);
@@ -422,7 +403,6 @@ function updateStage(value) {
     plasmaCore.material.opacity = mix(0, 0.18, fieldT) * (1 - finalT * 0.1);
     plasmaParticles.material.opacity = mix(0, 0.28, fieldT);
     phobosGlow.material.opacity = mix(0, 0.58, fieldT);
-    phobosPlume.material.opacity = mix(0, 0.88, fieldT);
     fieldLineMaterials.forEach((material, index) => {
         material.opacity = mix(0, 0.16 + (index % 2) * 0.05, fieldT);
     });
@@ -497,7 +477,6 @@ function animate() {
     phobos.rotation.x += 0.01;
     phobos.rotation.y += 0.014;
     phobosGlow.scale.setScalar(1 + Math.sin(elapsed * 4.2) * 0.16);
-    phobosPlume.rotation.z = Math.sin(elapsed * 3.2) * 0.18;
     deimosOrbit.rotation.z = elapsed * 0.12;
     deimos.rotation.x += 0.004;
     deimos.rotation.y += 0.006;
