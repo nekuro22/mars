@@ -1,26 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mars Terraforming Timeline</title>
+    <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 class="title">Hello World</h1>
-    <main>
-        <h2>Zusammenfassung</p>
-            <p>
-               Terraforming des Mars bezeichnet die langfristige Umgestaltung des Planeten zu einer lebensfreundlichen Umgebung. Heute ist der Mars für Menschen unbewohnbar, da seine Atmosphäre sehr dünn ist, die Temperaturen extrem niedrig sind und ein schützendes Magnetfeld fehlt. Um dies zu ändern, müsste zunächst die Atmosphäre verdichtet und der Planet erwärmt werden. Ein möglicher Ansatz wäre der Einsatz großer Solaranlagen und Laser, die Gestein erhitzen und dabei Sauerstoff, Kohlendioxid und Wasserdampf freisetzen. Dadurch könnten die Temperaturen steigen und gefrorenes Wasser zu Flüssen und Ozeanen schmelzen.
-            <br>
-                Zusätzlich könnten chemische Verfahren genutzt werden, um direkt auf dem Mars Wasser, Sauerstoff und Treibstoff herzustellen. Da der Planet nur sehr wenig Stickstoff besitzt, müsste dieser vermutlich von anderen Himmelskörpern importiert werden. Sobald geeignetere Umweltbedingungen geschaffen sind, könnten zunächst Mikroorganismen und Phytoplankton die Gewässer besiedeln. Danach würden Bakterien, Pilze, Moose und Flechten helfen, fruchtbaren Boden zu bilden, auf dem später größere Pflanzen wachsen könnten. Langfristig könnten so komplexe Ökosysteme entstehen.
-            <br>
-                Damit die neu geschaffene Atmosphäre nicht durch den Sonnenwind verloren geht, wäre wahrscheinlich ein künstliches Magnetfeld oder ein anderer Schutzmechanismus notwendig. Obwohl bereits Raumsonden und Rover wichtige Daten über den Mars sammeln, bleibt Terraforming eine gewaltige Herausforderung. Nach heutigem Wissensstand wäre die Umwandlung des Planeten zwar theoretisch möglich, würde jedoch enorme Ressourcen erfordern und wahrscheinlich viele Jahrhunderte oder sogar Jahrtausende dauern.
-            </p>
-            
+    <main class="app-shell">
+        <section class="scene-panel" aria-label="3D Terraforming Simulation">
+            <canvas id="marsCanvas"></canvas>
+            <div class="scanlines" aria-hidden="true"></div>
+            <div class="stage-badge">
+                <span id="stageKicker">Phase 01</span>
+                <strong id="stageTitle">Mars aktuell</strong>
+            </div>
+        </section>
 
+        <aside class="control-panel">
+            <header class="mission-header">
+                <p>Terraforming Archiv</p>
+                <h1>Mars Umbau</h1>
+                <span>Von kalter Wuste zu blau-grunem Planeten</span>
+            </header>
+
+            <section class="status-grid" aria-label="Planetare Werte">
+                <div>
+                    <span>Atmosphare</span>
+                    <strong id="atmoValue">1%</strong>
+                </div>
+                <div>
+                    <span>Wasser</span>
+                    <strong id="waterValue">0%</strong>
+                </div>
+                <div>
+                    <span>Magnetfeld</span>
+                    <strong id="fieldValue">0%</strong>
+                </div>
+            </section>
+
+            <section class="timeline-control">
+                <label for="terraformSlider">Terraforming-Stufe</label>
+                <input id="terraformSlider" type="range" min="0" max="3" value="0" step="0.01">
+                <div class="timeline-labels" aria-hidden="true">
+                    <span>Jetzt</span>
+                    <span>Ozeane</span>
+                    <span>Plasmaring</span>
+                    <span>Fertig</span>
+                </div>
+            </section>
+
+            <section class="stage-card" aria-live="polite">
+                <p id="stageYear">Sol 0</p>
+                <h2 id="stageName">Mars aktuell</h2>
+                <p id="stageText">
+                    Dunne CO2-Atmosphare, Staubstuerme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Warme direkt an den Sonnenwind.
+                </p>
+            </section>
+        </aside>
     </main>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

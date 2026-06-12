@@ -1,71 +1,322 @@
-h1{
-    color: rgb(255, 255, 255) !important;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
+:root {
+    --bg: #080807;
+    --panel: rgba(20, 19, 17, 0.82);
+    --panel-solid: #141311;
+    --line: rgba(255, 231, 194, 0.18);
+    --text: #f5ead7;
+    --muted: #b7a98f;
+    --rust: #c44b28;
+    --amber: #f5b756;
+    --aqua: #39c3c9;
+    --green: #70b767;
+    --plasma: #ff3b7d;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 26% 30%, rgba(196, 75, 40, 0.24), transparent 34rem),
+        radial-gradient(circle at 78% 76%, rgba(57, 195, 201, 0.12), transparent 28rem),
+        linear-gradient(135deg, #050504 0%, #15110e 48%, #070707 100%);
+    font-family: "IBM Plex Mono", "Courier New", monospace;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+.app-shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 430px);
+    width: 100vw;
+    min-height: 100vh;
+}
+
+.scene-panel {
+    position: relative;
+    min-width: 0;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#marsCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+
+#marsCanvas:active {
+    cursor: grabbing;
+}
+
+.scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.2;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.05),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+}
+
+.stage-badge {
+    position: absolute;
+    left: clamp(18px, 4vw, 54px);
+    bottom: clamp(18px, 4vw, 48px);
+    display: grid;
+    gap: 0.28rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--amber);
+    text-transform: uppercase;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
+}
+
+.stage-badge span {
+    color: var(--amber);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+}
+
+.stage-badge strong {
+    font-family: "Archivo Black", Impact, sans-serif;
+    font-size: clamp(2.2rem, 6vw, 6.2rem);
+    line-height: 0.9;
+    letter-spacing: 0;
+    max-width: 8ch;
+}
+
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.4rem;
+    padding: clamp(20px, 4vw, 42px);
+    background:
+        linear-gradient(180deg, rgba(255, 231, 194, 0.07), transparent 28%),
+        var(--panel);
+    border-left: 1px solid var(--line);
+    box-shadow: -18px 0 60px rgba(0, 0, 0, 0.42);
+    backdrop-filter: blur(18px);
+    z-index: 2;
+}
+
+.mission-header {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.mission-header p,
+.mission-header span,
+.stage-card p,
+.status-grid span,
+.timeline-control label,
+.timeline-labels {
+    color: var(--muted);
+}
+
+.mission-header p {
+    margin: 0;
+    color: var(--rust);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.76rem;
+}
+
+.mission-header h1 {
+    margin: 0;
+    font-family: "Archivo Black", Impact, sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.7rem);
+    line-height: 0.86;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.mission-header span {
+    max-width: 31ch;
+    line-height: 1.55;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.status-grid div {
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem 0.8rem;
+    min-width: 0;
+}
+
+.status-grid div + div {
+    border-left: 1px solid var(--line);
+}
+
+.status-grid span {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+}
+
+.status-grid strong {
+    color: var(--amber);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.timeline-control {
+    display: grid;
+    gap: 1rem;
+}
+
+.timeline-control label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 28px;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 0;
+    background: linear-gradient(90deg, var(--rust), var(--aqua), var(--plasma), var(--green));
+    box-shadow: 0 0 20px rgba(245, 183, 86, 0.2);
+}
+
+input[type="range"]::-moz-range-track {
+    height: 8px;
+    border-radius: 0;
+    background: linear-gradient(90deg, var(--rust), var(--aqua), var(--plasma), var(--green));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    width: 18px;
+    height: 28px;
+    margin-top: -10px;
+    appearance: none;
+    background: var(--text);
+    border: 3px solid #11100f;
+    box-shadow: 0 0 0 2px var(--amber), 0 0 24px rgba(255, 59, 125, 0.6);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 28px;
+    border: 3px solid #11100f;
+    border-radius: 0;
+    background: var(--text);
+    box-shadow: 0 0 0 2px var(--amber), 0 0 24px rgba(255, 59, 125, 0.6);
+}
+
+.timeline-labels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+}
+
+.timeline-labels span:nth-child(2),
+.timeline-labels span:nth-child(3),
+.timeline-labels span:nth-child(4) {
     text-align: center;
-    text-font-size: 50px;
-
-
 }
 
-button{
-    background-color: black;
-    color: white;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
-    
-}
-button:hover{
-    background-color: white;
-    color: black;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
+.timeline-labels span:last-child {
+    text-align: right;
 }
 
-#btn:active{
-    background-color: red;
-    color: white;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
-}
-.title{
-    color: red;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
+.stage-card {
+    min-height: 210px;
+    padding: 1.35rem;
+    border: 1px solid var(--line);
+    background:
+        linear-gradient(135deg, rgba(196, 75, 40, 0.14), transparent 42%),
+        rgba(0, 0, 0, 0.28);
 }
 
-body{
-    background-color: #343131;
-}
-h2{
-    color: white;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
+.stage-card p {
+    margin: 0;
+    line-height: 1.7;
 }
 
-p{
-    color: white;
-    padding: 20px;
-    margin: 20px;
-    align-items: center;
-    text-align: center;
-    text-font-size: 50px;
+.stage-card > p:first-child {
+    color: var(--aqua);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
 }
 
+.stage-card h2 {
+    margin: 0.45rem 0 0.8rem;
+    font-size: clamp(1.35rem, 4vw, 2.1rem);
+    line-height: 1.05;
+}
 
+@media (max-width: 860px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(390px, 58vh) auto;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .control-panel {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+
+    .stage-badge strong {
+        max-width: 10ch;
+    }
+}
+
+@media (max-width: 520px) {
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-grid div + div {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+}
