@@ -155,10 +155,11 @@ body::before {
 .mission-header h1 {
     margin: 0;
     font-family: "Archivo Black", Impact, sans-serif;
-    font-size: clamp(2.8rem, 7vw, 5.7rem);
-    line-height: 0.86;
+    font-size: clamp(2.2rem, 4.8vw, 4.15rem);
+    line-height: 0.92;
     letter-spacing: 0;
     text-transform: uppercase;
+    overflow-wrap: anywhere;
 }
 
 .mission-header span {
