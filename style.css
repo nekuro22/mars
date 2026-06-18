@@ -111,7 +111,153 @@ body::before {
     font-size: clamp(2.2rem, 6vw, 6.2rem);
     line-height: 0.9;
     letter-spacing: 0;
+<<<<<<< Updated upstream
     max-width: 8ch;
+=======
+    max-width: 10ch;
+}
+
+.ai-notice {
+    position: absolute;
+    right: clamp(14px, 3vw, 36px);
+    bottom: clamp(14px, 3vw, 36px);
+    color: var(--muted);
+    font-size: 0.7rem;
+    opacity: 0.55;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1.3;
+    text-align: right;
+}
+
+.info-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.info-link:hover {
+    color: var(--soft);
+}
+
+.info-shell {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100svh;
+    background:
+        linear-gradient(140deg, rgba(184, 95, 61, 0.18), transparent 38rem),
+        linear-gradient(180deg, #15120f 0%, #0d0d0c 100%);
+    overflow-y: auto;
+}
+
+.info-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(24px, 6vw, 64px);
+    line-height: 1.8;
+}
+
+.info-content h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 1.5rem;
+}
+
+.info-content p {
+    color: var(--muted);
+}
+
+.info-content .lead {
+    color: var(--soft);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.info-content h2 {
+    margin: 2.5rem 0 1rem;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    color: var(--rust);
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.info-content h3 {
+    margin: 1.8rem 0 0.6rem;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--amber);
+}
+
+.info-content ul,
+.info-content ol {
+    padding-left: 1.4rem;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.info-content li {
+    margin-bottom: 0.4rem;
+}
+
+.info-content li strong {
+    color: var(--soft);
+}
+
+.info-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+}
+
+.info-content th,
+.info-content td {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--line);
+    text-align: left;
+}
+
+.info-content th {
+    color: var(--soft);
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.info-content td:first-child {
+    color: var(--soft);
+    white-space: nowrap;
+}
+
+.info-content blockquote {
+    margin: 1.2rem 0;
+    padding: 0.6rem 1rem;
+    border-left: 3px solid var(--amber);
+    color: var(--soft);
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0 4px 4px 0;
+}
+
+.back-link {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.back-link a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-link a:hover {
+    color: var(--soft);
+>>>>>>> Stashed changes
 }
 
 .control-panel {
