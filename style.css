@@ -139,6 +139,23 @@ body {
     color: var(--muted);
 }
 
+.back-link {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.back-link a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.back-link a:hover {
+    color: var(--soft);
+}
+
 .control-panel {
     display: flex;
     flex-direction: column;
