@@ -271,34 +271,6 @@ for (let i = 0; i < 7; i++) {
     addFieldLine(2.55 + i * 0.34, 1.05 + i * 0.25, 0.55 + i * 0.02);
 }
 
-const particleCount = 900;
-const particlePositions = new Float32Array(particleCount * 3);
-for (let i = 0; i < particleCount; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const tubeAngle = Math.random() * Math.PI * 2;
-    const tubeRadius = Math.sqrt(Math.random()) * 0.44;
-    const radius = 2.34 + Math.cos(tubeAngle) * tubeRadius;
-    particlePositions[i * 3] = Math.cos(angle) * radius;
-    particlePositions[i * 3 + 1] = Math.sin(tubeAngle) * tubeRadius;
-    particlePositions[i * 3 + 2] = Math.sin(angle) * radius;
-}
-
-const particleGeo = new THREE.BufferGeometry();
-particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePositions, 3));
-const plasmaParticles = new THREE.Points(
-    particleGeo,
-    new THREE.PointsMaterial({
-        color: 0x7ff8ff,
-        size: 0.024,
-        transparent: true,
-        opacity: 0,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-    })
-);
-plasmaParticles.scale.y = 0.72;
-plasmaGroup.add(plasmaParticles);
-
 function makeMoon(radius, color, seed) {
     const moon = new THREE.Mesh(
         new THREE.IcosahedronGeometry(radius, 3),
@@ -403,7 +375,6 @@ function updateStage(value) {
     plasmaTorusBaseOpacity = mix(0, 0.2, fieldT) * (1 - finalT * 0.1);
     plasmaTorus.material.opacity = plasmaTorusBaseOpacity;
     plasmaCore.material.opacity = mix(0, 0.18, fieldT) * (1 - finalT * 0.1);
-    plasmaParticles.material.opacity = mix(0, 0.28, fieldT);
     phobosGlow.material.opacity = mix(0, 0.58, fieldT);
     fieldLineMaterials.forEach((material, index) => {
         material.opacity = mix(0, 0.16 + (index % 2) * 0.05, fieldT);
@@ -488,7 +459,6 @@ function animate() {
     plasmaGroup.rotation.z = Math.sin(elapsed * 0.28) * 0.035;
     plasmaTorus.material.opacity = plasmaTorusBaseOpacity * (0.88 + Math.sin(elapsed * 2.4) * 0.08);
     plasmaCore.rotation.z = elapsed * 0.08;
-    plasmaParticles.rotation.z = elapsed * 0.38;
     phobosOrbit.rotation.z = elapsed * 0.42;
     phobos.rotation.x += 0.01;
     phobos.rotation.y += 0.014;
