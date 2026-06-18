@@ -227,7 +227,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .stage-card {
-    min-height: 200px;
+    min-height: 280px;
     padding: 1.35rem;
     border: 1px solid var(--line);
     border-radius: 8px;
