@@ -3,35 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mars Terraforming Timeline</title>
+    <title>Mars Terraforming</title>
     <link rel="icon" href="data:,">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main class="app-shell">
         <section class="scene-panel" aria-label="3D Terraforming Simulation">
             <canvas id="marsCanvas"></canvas>
-            <div class="scanlines" aria-hidden="true"></div>
             <div class="stage-badge">
-                <span id="stageKicker">Phase 01</span>
+                <span id="stageKicker">Schritt 1</span>
                 <strong id="stageTitle">Mars aktuell</strong>
             </div>
         </section>
 
         <aside class="control-panel">
             <header class="mission-header">
-                <p>Terraforming Archiv</p>
-                <h1>Mars Terra-
-                    forming</h1>
-                <span>Von kalter Wuste zu blau-grunem Planeten</span>
+                <p>Interaktive Skizze</p>
+                <h1>Mars Terraforming</h1>
+                <span>Eine ruhige Annäherung daran, wie sich der Planet über sehr lange Zeit verändern könnte.</span>
             </header>
 
             <section class="status-grid" aria-label="Planetare Werte">
                 <div>
-                    <span>Atmosphare</span>
+                    <span>Atmosphäre</span>
                     <strong id="atmoValue">1%</strong>
                 </div>
                 <div>
@@ -45,13 +40,13 @@
             </section>
 
             <section class="timeline-control">
-                <label for="terraformSlider">Terraforming-Stufe</label>
+                <label for="terraformSlider">Entwicklung</label>
                 <input id="terraformSlider" type="range" min="0" max="3" value="0" step="0.01">
                 <div class="timeline-labels" aria-hidden="true">
                     <span>Jetzt</span>
-                    <span>Ozeane</span>
-                    <span>Plasmaring</span>
-                    <span>Fertig</span>
+                    <span>Atmosphäre</span>
+                    <span>Magnetfeld</span>
+                    <span>Stabil</span>
                 </div>
             </section>
 
@@ -59,49 +54,11 @@
                 <p id="stageYear">Sol 0</p>
                 <h2 id="stageName">Mars aktuell</h2>
                 <p id="stageText">
-                    Dunne CO2-Atmosphare, Staubstuerme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Warme direkt an den Sonnenwind.
+                    Dünne CO2-Atmosphäre, Staubstürme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Wärme direkt an den Sonnenwind.
                 </p>
             </section>
         </aside>
     </main>
-
-    <section class="info-section" aria-label="Terraforming Hintergrund">
-        <div class="info-heading">
-            <p>Projektuebersicht</p>
-            <h2>Wie aus Mars langsam eine zweite Erde werden könnte</h2>
-        </div>
-
-        <div class="info-grid">
-            <article>
-                <span>01</span>
-                <h3>Atmosphaere aufbauen</h3>
-                <p>
-                    Der heutige Mars besitzt nur eine sehr duenne Atmosphaere. Terraforming muesste zuerst Druck und Temperatur erhoehen, damit Wasser stabil fluessig bleiben kann.
-                </p>
-            </article>
-            <article>
-                <span>02</span>
-                <h3>Wasser freisetzen</h3>
-                <p>
-                    Eis aus Polen, Boden und unterirdischen Lagern koennte schmelzen und sich in alten Einschlagbecken sammeln. Daraus entstehen Seen, Fluesse und spaeter flache Ozeane.
-                </p>
-            </article>
-            <article>
-                <span>03</span>
-                <h3>Magnetfeld schuetzen</h3>
-                <p>
-                    Ein kuenstlicher Plasmaring mit Phobos als Umlaufkoerper könnte geladene Teilchen fuehren und den Sonnenwind ablenken, damit die neue Atmosphaere nicht wieder verloren geht.
-                </p>
-            </article>
-            <article>
-                <span>04</span>
-                <h3>Biosphaere starten</h3>
-                <p>
-                    Erst wären Mikroorganismen, Moose und robuste Pflanzen sinnvoll. Über lange Zeit koennten sie Boden bilden, Sauerstoff erhoehen und stabilere Ökosysteme vorbereiten.
-                </p>
-            </article>
-        </div>
-    </section>
 
     <script type="module" src="script.js"></script>
 </body>

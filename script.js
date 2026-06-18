@@ -3,6 +3,8 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.m
 const canvas = document.querySelector("#marsCanvas");
 const slider = document.querySelector("#terraformSlider");
 
+window.scrollTo(0, 0);
+
 const stageTitle = document.querySelector("#stageTitle");
 const stageKicker = document.querySelector("#stageKicker");
 const stageYear = document.querySelector("#stageYear");
@@ -16,22 +18,22 @@ const stages = [
     {
         title: "Mars aktuell",
         year: "Sol 0",
-        text: "Dunne CO2-Atmosphare, Staubstuerme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Warme direkt an den Sonnenwind."
+        text: "Dünne CO2-Atmosphäre, Staubstürme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Wärme direkt an den Sonnenwind."
     },
     {
-        title: "Ozeane und Luft",
-        year: "Jahr 220",
-        text: "Spiegel und Reaktoren erwarmen Eis- und Gesteinslager. Flache Meere sammeln sich in alten Becken, eine dichtere Atmosphare legt einen blauen Saum um den Mars."
+        title: "Atmosphäre",
+        year: "Jahr 0-700",
+        text: "Orbitale Laser erwärmen über mehr als 500 Jahre Oberfläche und Eis. Danach bringen Kapseln Stickstoff ein, damit Druck und Atmosphäre langsam wachsen."
     },
     {
-        title: "Plasmaring aktiv",
-        year: "Jahr 410",
-        text: "Ein geladener Plasmaring kreist stabil um den Planeten. Er lenkt Sonnenwind ab und ersetzt das fehlende innere Magnetfeld durch einen technischen Schutzschild."
+        title: "Magnetfeld",
+        year: "Jahr 700-850",
+        text: "Ein geladener Plasmaring kreist um den Planeten. Er lenkt Sonnenwind ab und ersetzt das fehlende innere Magnetfeld durch einen technischen Schutz."
     },
     {
-        title: "Terraformiert",
+        title: "Stabilere Oberfläche",
         year: "Jahr 900+",
-        text: "Ozeane, Wolken und erste Biospharen stabilisieren das Klima. Gruene Korridore breiten sich an Kuesten und Aequatorzonen aus."
+        text: "Ozeane, Wolken und erste Biosphären stabilisieren das Klima. Grüne Korridore breiten sich an Küsten und Äquatorzonen aus."
     }
 ];
 
@@ -42,8 +44,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x080807, 0.025);
 
-const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-camera.position.set(0, 0.24, 6.4);
+const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
+camera.position.set(0, 0, 8.4);
 
 const root = new THREE.Group();
 scene.add(root);
@@ -217,6 +219,152 @@ const atmosphere = new THREE.Mesh(
 );
 root.add(atmosphere);
 
+const laserGroup = new THREE.Group();
+root.add(laserGroup);
+
+const laserMaterials = [];
+const laserSatelliteMaterials = [];
+const laserSatellites = [];
+const laserTargets = [
+    new THREE.Vector3(-0.9, 0.55, 1.34),
+    new THREE.Vector3(0.72, -0.18, 1.53),
+    new THREE.Vector3(0.2, 0.88, 1.43)
+];
+
+function alignCylinderBetween(mesh, start, end) {
+    const midpoint = start.clone().add(end).multiplyScalar(0.5);
+    const direction = end.clone().sub(start);
+    mesh.position.copy(midpoint);
+    mesh.scale.y = direction.length();
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+}
+
+function makeOrbitalLaser(target, index) {
+    const targetPoint = target.clone().normalize().multiplyScalar(1.72);
+    const orbitPoint = target.clone().normalize().multiplyScalar(3.25 + index * 0.18);
+    const group = new THREE.Group();
+    group.position.copy(orbitPoint);
+    group.lookAt(0, 0, 0);
+
+    const body = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.1, 0.12),
+        new THREE.MeshStandardMaterial({
+            color: 0xb9b0a2,
+            transparent: true,
+            opacity: 0.28,
+            roughness: 0.55,
+            metalness: 0.15
+        })
+    );
+    group.add(body);
+
+    const panelMaterial = new THREE.MeshStandardMaterial({
+        color: 0x263f52,
+        transparent: true,
+        opacity: 0.24,
+        roughness: 0.45,
+        metalness: 0.08
+    });
+    const leftPanel = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.018, 0.13), panelMaterial);
+    const rightPanel = leftPanel.clone();
+    leftPanel.position.x = -0.28;
+    rightPanel.position.x = 0.28;
+    group.add(leftPanel, rightPanel);
+    laserGroup.add(group);
+
+    const beamMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffc36b,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.028, 1, 16), beamMaterial);
+    alignCylinderBetween(beam, orbitPoint, targetPoint);
+    laserGroup.add(beam);
+
+    const coreMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const core = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.009, 1, 12), coreMaterial);
+    alignCylinderBetween(core, orbitPoint, targetPoint);
+    laserGroup.add(core);
+
+    const spotMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff7a3b,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const spot = new THREE.Mesh(new THREE.SphereGeometry(0.075, 24, 24), spotMaterial);
+    spot.position.copy(targetPoint.clone().multiplyScalar(1.01));
+    laserGroup.add(spot);
+
+    laserMaterials.push(beamMaterial, coreMaterial, spotMaterial);
+    laserSatelliteMaterials.push(body.material, panelMaterial);
+    laserSatellites.push(group, spot);
+}
+
+laserTargets.forEach(makeOrbitalLaser);
+
+const nitrogenGroup = new THREE.Group();
+root.add(nitrogenGroup);
+
+const nitrogenMaterials = [];
+const nitrogenCapsules = [];
+const nitrogenSource = new THREE.Vector3(-4.6, 1.35, 2.2);
+const nitrogenTargets = [
+    new THREE.Vector3(-0.55, 0.62, 1.72),
+    new THREE.Vector3(0.02, 0.08, 1.86),
+    new THREE.Vector3(0.52, -0.38, 1.78),
+    new THREE.Vector3(-0.2, -0.72, 1.72),
+    new THREE.Vector3(0.74, 0.5, 1.62)
+];
+
+function makeNitrogenCapsule(target, index) {
+    const trailMaterial = new THREE.MeshBasicMaterial({
+        color: 0x53c7ff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+    const explosionMaterial = new THREE.MeshBasicMaterial({
+        color: 0xb8efff,
+        transparent: true,
+        opacity: 0,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    const trailGeometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(),
+        new THREE.Vector3()
+    ]);
+    const trail = new THREE.Line(trailGeometry, trailMaterial);
+    nitrogenGroup.add(trail);
+
+    const explosion = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 24), explosionMaterial);
+    explosion.position.copy(target);
+    nitrogenGroup.add(explosion);
+
+    nitrogenMaterials.push(trailMaterial, explosionMaterial);
+    nitrogenCapsules.push({
+        trail,
+        explosion,
+        start: nitrogenSource.clone().add(new THREE.Vector3(index * -0.08, index * 0.03, index * 0.04)),
+        end: target.clone(),
+        delay: index * 0.16
+    });
+}
+
+nitrogenTargets.forEach(makeNitrogenCapsule);
+
 const plasmaGroup = new THREE.Group();
 plasmaGroup.rotation.x = -0.12;
 root.add(plasmaGroup);
@@ -353,10 +501,12 @@ scene.add(makeStars());
 
 let terraformValue = 0;
 let plasmaTorusBaseOpacity = 0;
+let laserBaseOpacity = 0;
+let nitrogenBaseOpacity = 0;
 let targetRotationX = -0.16;
 let targetRotationY = 0.34;
-let cameraDistance = 6.4;
-let targetCameraDistance = 6.4;
+let cameraDistance = 8.4;
+let targetCameraDistance = 8.4;
 let isDragging = false;
 let lastPointer = { x: 0, y: 0 };
 
@@ -365,6 +515,8 @@ function updateStage(value) {
     const fieldT = smoothstep(1.68, 2.22, value);
     const finalT = smoothstep(2.35, 3, value);
     const airT = smoothstep(0.18, 1.55, value);
+    const laserT = smoothstep(0.52, 0.66, value) * (1 - smoothstep(1.12, 1.26, value));
+    const nitrogenT = smoothstep(1.18, 1.3, value) * (1 - smoothstep(1.42, 1.5, value));
     const stageIndex = Math.min(3, Math.max(0, Math.round(value)));
     const stage = stages[stageIndex];
 
@@ -376,6 +528,20 @@ function updateStage(value) {
     plasmaTorus.material.opacity = plasmaTorusBaseOpacity;
     plasmaCore.material.opacity = mix(0, 0.18, fieldT) * (1 - finalT * 0.1);
     phobosGlow.material.opacity = mix(0, 0.58, fieldT);
+    laserBaseOpacity = mix(0, 0.66, laserT);
+    laserMaterials.forEach((material, index) => {
+        const isCore = index % 3 === 1;
+        const isSpot = index % 3 === 2;
+        material.opacity = laserBaseOpacity * (isCore ? 0.65 : isSpot ? 0.8 : 1);
+    });
+    laserSatelliteMaterials.forEach((material) => {
+        material.opacity = mix(0.22, 1, laserT);
+    });
+    nitrogenBaseOpacity = mix(0, 0.92, nitrogenT);
+    nitrogenMaterials.forEach((material, index) => {
+        const isExplosion = index % 2 === 1;
+        material.opacity = nitrogenBaseOpacity * (isExplosion ? 0.48 : 0.95);
+    });
     fieldLineMaterials.forEach((material, index) => {
         material.opacity = mix(0, 0.16 + (index % 2) * 0.05, fieldT);
     });
@@ -385,7 +551,7 @@ function updateStage(value) {
         mix(1, 0.9, oceanT * 0.18)
     );
 
-    stageKicker.textContent = `Phase ${String(stageIndex + 1).padStart(2, "0")}`;
+    stageKicker.textContent = `Schritt ${stageIndex + 1}`;
     stageTitle.textContent = stage.title;
     stageYear.textContent = stage.year;
     stageName.textContent = stage.title;
@@ -400,8 +566,8 @@ function resize() {
     const height = canvas.clientHeight;
     renderer.setSize(width, height, false);
     camera.aspect = width / height;
-    const minDistance = width < 720 ? 5.8 : 4.6;
-    const maxDistance = width < 720 ? 13.5 : 11.5;
+    const minDistance = width < 720 ? 8.8 : 6.8;
+    const maxDistance = width < 720 ? 16.5 : 14.5;
     targetCameraDistance = Math.min(maxDistance, Math.max(minDistance, targetCameraDistance));
     cameraDistance = Math.min(maxDistance, Math.max(minDistance, cameraDistance));
     camera.updateProjectionMatrix();
@@ -436,8 +602,8 @@ canvas.addEventListener("pointerup", (event) => {
 canvas.addEventListener("wheel", (event) => {
     event.preventDefault();
     const width = canvas.clientWidth;
-    const minDistance = width < 720 ? 5.8 : 4.6;
-    const maxDistance = width < 720 ? 13.5 : 11.5;
+    const minDistance = width < 720 ? 8.8 : 6.8;
+    const maxDistance = width < 720 ? 16.5 : 14.5;
     targetCameraDistance += event.deltaY * 0.006;
     targetCameraDistance = Math.min(maxDistance, Math.max(minDistance, targetCameraDistance));
 }, { passive: false });
@@ -451,11 +617,43 @@ function animate() {
     root.rotation.x += (targetRotationX - root.rotation.x) * 0.06;
     root.rotation.y += (targetRotationY - root.rotation.y) * 0.06;
     cameraDistance += (targetCameraDistance - cameraDistance) * 0.12;
+    camera.position.y = 0;
     camera.position.z = cameraDistance;
     mars.rotation.y += 0.0012;
     ocean.rotation.y += 0.0012;
     green.rotation.y += 0.0012;
     clouds.rotation.y += 0.0019;
+    laserGroup.rotation.y = Math.sin(elapsed * 0.18) * 0.08;
+    laserGroup.rotation.z = elapsed * 0.045;
+    laserMaterials.forEach((material, index) => {
+        const flicker = 0.82 + Math.sin(elapsed * 8.5 + index * 1.7) * 0.14;
+        const isCore = index % 3 === 1;
+        const isSpot = index % 3 === 2;
+        material.opacity = laserBaseOpacity * flicker * (isCore ? 0.65 : isSpot ? 0.8 : 1);
+    });
+    laserSatellites.forEach((object, index) => {
+        const pulse = 1 + Math.sin(elapsed * 6 + index) * 0.04;
+        object.scale.setScalar(pulse);
+    });
+    nitrogenCapsules.forEach((capsule, index) => {
+        const cycle = (elapsed * 0.18 + capsule.delay) % 1;
+        const travelT = Math.min(1, cycle / 0.76);
+        const easedT = travelT * travelT * (3 - 2 * travelT);
+        const head = capsule.start.clone().lerp(capsule.end, easedT);
+        const direction = capsule.end.clone().sub(capsule.start).normalize();
+        const tail = head.clone().sub(direction.multiplyScalar(0.9));
+        const positions = capsule.trail.geometry.attributes.position;
+        positions.setXYZ(0, tail.x, tail.y, tail.z);
+        positions.setXYZ(1, head.x, head.y, head.z);
+        positions.needsUpdate = true;
+
+        const explosionT = smoothstep(0.72, 0.86, cycle) * (1 - smoothstep(0.9, 1, cycle));
+        capsule.trail.visible = nitrogenBaseOpacity > 0.01 && travelT < 1;
+        capsule.trail.material.opacity = nitrogenBaseOpacity * (0.7 + Math.sin(elapsed * 14 + index) * 0.18);
+        capsule.explosion.visible = nitrogenBaseOpacity > 0.01 && explosionT > 0.01;
+        capsule.explosion.scale.setScalar(0.45 + explosionT * (1.8 + index * 0.08));
+        capsule.explosion.material.opacity = nitrogenBaseOpacity * explosionT * 0.55;
+    });
     plasmaGroup.rotation.z = Math.sin(elapsed * 0.28) * 0.035;
     plasmaTorus.material.opacity = plasmaTorusBaseOpacity * (0.88 + Math.sin(elapsed * 2.4) * 0.08);
     plasmaCore.rotation.z = elapsed * 0.08;
