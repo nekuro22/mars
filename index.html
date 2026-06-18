@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mars Terraforming</title>
+    <title id="pageTitle"></title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,50 +12,48 @@
         <section class="scene-panel" aria-label="3D Terraforming Simulation">
             <canvas id="marsCanvas"></canvas>
             <div class="stage-badge">
-                <span id="stageKicker">Schritt 1</span>
-                <strong id="stageTitle">Mars aktuell</strong>
+                <span id="stageKicker"></span>
+                <strong id="stageTitle"></strong>
             </div>
         </section>
 
         <aside class="control-panel">
             <header class="mission-header">
-                <p>Interaktive Skizze</p>
-                <h1>Mars Terraforming</h1>
-                <span>Eine ruhige Annäherung daran, wie sich der Planet über sehr lange Zeit verändern könnte.</span>
+                <p id="missionSubtitle"></p>
+                <h1 id="missionHeading"></h1>
+                <span id="missionDesc"></span>
             </header>
 
-            <section class="status-grid" aria-label="Planetare Werte">
+            <section class="status-grid">
                 <div>
-                    <span>Atmosphäre</span>
+                    <span id="statusLabel0"></span>
                     <strong id="atmoValue">1%</strong>
                 </div>
                 <div>
-                    <span>Wasser</span>
+                    <span id="statusLabel1"></span>
                     <strong id="waterValue">0%</strong>
                 </div>
                 <div>
-                    <span>Magnetfeld</span>
+                    <span id="statusLabel2"></span>
                     <strong id="fieldValue">0%</strong>
                 </div>
             </section>
 
             <section class="timeline-control">
-                <label for="terraformSlider">Entwicklung</label>
+                <label id="timelineLabel" for="terraformSlider"></label>
                 <input id="terraformSlider" type="range" min="0" max="3" value="0" step="0.01">
                 <div class="timeline-labels" aria-hidden="true">
-                    <span>Jetzt</span>
-                    <span>Atmosphäre</span>
-                    <span>Magnetfeld</span>
-                    <span>Stabil</span>
+                    <span id="timelineStep0"></span>
+                    <span id="timelineStep1"></span>
+                    <span id="timelineStep2"></span>
+                    <span id="timelineStep3"></span>
                 </div>
             </section>
 
             <section class="stage-card" aria-live="polite">
-                <p id="stageYear">Sol 0</p>
-                <h2 id="stageName">Mars aktuell</h2>
-                <p id="stageText">
-                    Dünne CO2-Atmosphäre, Staubstürme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Wärme direkt an den Sonnenwind.
-                </p>
+                <p id="stageYear"></p>
+                <h2 id="stageName"></h2>
+                <p id="stageText"></p>
             </section>
         </aside>
     </main>

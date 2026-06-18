@@ -14,28 +14,8 @@ const atmoValue = document.querySelector("#atmoValue");
 const waterValue = document.querySelector("#waterValue");
 const fieldValue = document.querySelector("#fieldValue");
 
-const stages = [
-    {
-        title: "Mars aktuell",
-        year: "Sol 0",
-        text: "Dünne CO2-Atmosphäre, Staubstürme, Eis an den Polen und kein globales Magnetfeld. Der Planet verliert Schutz und Wärme direkt an den Sonnenwind."
-    },
-    {
-        title: "Atmosphäre",
-        year: "Jahr 0-700",
-        text: "Orbitale Laser erwärmen über mehr als 500 Jahre Oberfläche und Eis. Danach bringen Kapseln Stickstoff ein, damit Druck und Atmosphäre langsam wachsen."
-    },
-    {
-        title: "Magnetfeld",
-        year: "Jahr 700-850",
-        text: "Ein geladener Plasmaring kreist um den Planeten. Er lenkt Sonnenwind ab und ersetzt das fehlende innere Magnetfeld durch einen technischen Schutz."
-    },
-    {
-        title: "Stabilere Oberfläche",
-        year: "Jahr 900+",
-        text: "Ozeane, Wolken und erste Biosphären stabilisieren das Klima. Grüne Korridore breiten sich an Küsten und Äquatorzonen aus."
-    }
-];
+let texts = {};
+let stages = [];
 
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -366,11 +346,9 @@ function makeNitrogenCapsule(target, index) {
 nitrogenTargets.forEach(makeNitrogenCapsule);
 
 const plasmaGroup = new THREE.Group();
-plasmaGroup.rotation.x = -0.12;
-root.add(plasmaGroup);
 
 const plasmaTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(2.34, 0.48, 48, 220),
+    new THREE.TorusGeometry(3.2, 0.4, 48, 220),
     new THREE.MeshBasicMaterial({
         color: 0x0a92ff,
         transparent: true,
@@ -379,11 +357,11 @@ const plasmaTorus = new THREE.Mesh(
         depthWrite: false
     })
 );
-plasmaTorus.scale.y = 0.72;
+plasmaTorus.scale.y = 0.75;
 plasmaGroup.add(plasmaTorus);
 
 const plasmaCore = new THREE.Mesh(
-    new THREE.TorusGeometry(2.34, 0.18, 32, 220),
+    new THREE.TorusGeometry(3.2, 0.15, 32, 220),
     new THREE.MeshBasicMaterial({
         color: 0x27e6ff,
         transparent: true,
@@ -392,7 +370,7 @@ const plasmaCore = new THREE.Mesh(
         depthWrite: false
     })
 );
-plasmaCore.scale.y = 0.72;
+plasmaCore.scale.y = 0.75;
 plasmaGroup.add(plasmaCore);
 
 const fieldLineMaterials = [];
@@ -415,8 +393,8 @@ function addFieldLine(width, height, z, color = 0x22d8c7) {
 }
 
 for (let i = 0; i < 7; i++) {
-    addFieldLine(2.55 + i * 0.34, 1.05 + i * 0.25, -0.55 - i * 0.02);
-    addFieldLine(2.55 + i * 0.34, 1.05 + i * 0.25, 0.55 + i * 0.02);
+    addFieldLine(3.6 + i * 0.3, 1.4 + i * 0.2, -0.55 - i * 0.02);
+    addFieldLine(3.6 + i * 0.3, 1.4 + i * 0.2, 0.55 + i * 0.02);
 }
 
 function makeMoon(radius, color, seed) {
@@ -446,7 +424,7 @@ const moonGroup = new THREE.Group();
 root.add(moonGroup);
 
 const phobosOrbit = new THREE.Group();
-phobosOrbit.rotation.x = plasmaGroup.rotation.x;
+phobosOrbit.rotation.x = -0.12;
 moonGroup.add(phobosOrbit);
 
 const phobos = makeMoon(0.105, 0x9b8d80, 77);
@@ -466,6 +444,7 @@ const phobosGlow = new THREE.Mesh(
 );
 phobosGlow.position.copy(phobos.position);
 phobosOrbit.add(phobosGlow);
+phobosOrbit.add(plasmaGroup);
 
 const deimosOrbit = new THREE.Group();
 deimosOrbit.rotation.x = 0.24;
@@ -542,8 +521,14 @@ function updateStage(value) {
         const isExplosion = index % 2 === 1;
         material.opacity = nitrogenBaseOpacity * (isExplosion ? 0.48 : 0.95);
     });
+    const stageColors = [0x8a6040, 0xd4a050, 0x22d8c7, 0x5ab86e];
+    const stageOpacities = [0.08, 0.12, 0.22, 0.15];
+    const currentColor = stageColors[stageIndex];
+    const currentOpacity = stageOpacities[stageIndex];
+
     fieldLineMaterials.forEach((material, index) => {
-        material.opacity = mix(0, 0.16 + (index % 2) * 0.05, fieldT);
+        material.color.setHex(currentColor);
+        material.opacity = currentOpacity * (0.85 + (index % 2) * 0.15);
     });
     marsMaterial.color.setRGB(
         mix(1, 0.72, oceanT * 0.35 + finalT * 0.2),
@@ -551,7 +536,7 @@ function updateStage(value) {
         mix(1, 0.9, oceanT * 0.18)
     );
 
-    stageKicker.textContent = `Schritt ${stageIndex + 1}`;
+    stageKicker.textContent = `${texts.stageBadge?.stepPrefix || "Schritt"} ${stageIndex + 1}`;
     stageTitle.textContent = stage.title;
     stageYear.textContent = stage.year;
     stageName.textContent = stage.title;
@@ -654,7 +639,6 @@ function animate() {
         capsule.explosion.scale.setScalar(0.45 + explosionT * (1.8 + index * 0.08));
         capsule.explosion.material.opacity = nitrogenBaseOpacity * explosionT * 0.55;
     });
-    plasmaGroup.rotation.z = Math.sin(elapsed * 0.28) * 0.035;
     plasmaTorus.material.opacity = plasmaTorusBaseOpacity * (0.88 + Math.sin(elapsed * 2.4) * 0.08);
     plasmaCore.rotation.z = elapsed * 0.08;
     phobosOrbit.rotation.z = elapsed * 0.42;
@@ -668,6 +652,35 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-resize();
-updateStage(0);
-animate();
+async function loadTexts() {
+    const res = await fetch("texts.json");
+    texts = await res.json();
+    stages = texts.stages;
+
+    document.title = texts.pageTitle;
+    document.querySelector("#missionSubtitle").textContent = texts.mission.subtitle;
+    document.querySelector("#missionHeading").textContent = texts.mission.heading;
+    document.querySelector("#missionDesc").textContent = texts.mission.description;
+
+    for (let i = 0; i < 3; i++) {
+        document.querySelector(`#statusLabel${i}`).textContent = texts.statusGrid.labels[i];
+    }
+
+    document.querySelector("#timelineLabel").textContent = texts.timeline.label;
+
+    for (let i = 0; i < 4; i++) {
+        document.querySelector(`#timelineStep${i}`).textContent = texts.timeline.steps[i];
+    }
+
+    document.querySelector(".scene-panel").setAttribute("aria-label", texts.aria.scenePanel);
+    document.querySelector(".status-grid").setAttribute("aria-label", texts.aria.statusGrid);
+}
+
+async function init() {
+    await loadTexts();
+    resize();
+    updateStage(0);
+    animate();
+}
+
+init();
