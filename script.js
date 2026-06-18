@@ -444,7 +444,7 @@ const phobosGlow = new THREE.Mesh(
 );
 phobosGlow.position.copy(phobos.position);
 phobosOrbit.add(phobosGlow);
-phobosOrbit.add(plasmaGroup);
+root.add(plasmaGroup);
 
 const deimosOrbit = new THREE.Group();
 deimosOrbit.rotation.x = 0.24;
