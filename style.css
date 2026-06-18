@@ -85,6 +85,20 @@ body {
     max-width: 10ch;
 }
 
+.ai-notice {
+    position: absolute;
+    right: clamp(14px, 3vw, 36px);
+    bottom: clamp(14px, 3vw, 36px);
+    color: var(--muted);
+    font-size: 0.7rem;
+    opacity: 0.55;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1.3;
+    text-align: right;
+}
+
 .control-panel {
     display: flex;
     flex-direction: column;
@@ -323,5 +337,11 @@ input[type="range"]::-moz-range-thumb {
     .stage-badge {
         top: 16px;
         bottom: auto;
+    }
+
+    .ai-notice {
+        top: 18px;
+        bottom: auto;
+        right: clamp(14px, 3vw, 36px);
     }
 }
