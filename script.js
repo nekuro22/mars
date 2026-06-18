@@ -348,7 +348,7 @@ nitrogenTargets.forEach(makeNitrogenCapsule);
 const plasmaGroup = new THREE.Group();
 
 const plasmaTorus = new THREE.Mesh(
-    new THREE.TorusGeometry(3.2, 0.4, 48, 220),
+    new THREE.TorusGeometry(3.8, 0.35, 48, 220),
     new THREE.MeshBasicMaterial({
         color: 0x0a92ff,
         transparent: true,
@@ -357,11 +357,11 @@ const plasmaTorus = new THREE.Mesh(
         depthWrite: false
     })
 );
-plasmaTorus.scale.y = 0.75;
+plasmaTorus.scale.y = 0.7;
 plasmaGroup.add(plasmaTorus);
 
 const plasmaCore = new THREE.Mesh(
-    new THREE.TorusGeometry(3.2, 0.15, 32, 220),
+    new THREE.TorusGeometry(3.8, 0.12, 32, 220),
     new THREE.MeshBasicMaterial({
         color: 0x27e6ff,
         transparent: true,
@@ -370,7 +370,7 @@ const plasmaCore = new THREE.Mesh(
         depthWrite: false
     })
 );
-plasmaCore.scale.y = 0.75;
+plasmaCore.scale.y = 0.7;
 plasmaGroup.add(plasmaCore);
 
 const fieldLineMaterials = [];
@@ -393,8 +393,8 @@ function addFieldLine(width, height, z, color = 0x22d8c7) {
 }
 
 for (let i = 0; i < 7; i++) {
-    addFieldLine(3.6 + i * 0.3, 1.4 + i * 0.2, -0.55 - i * 0.02);
-    addFieldLine(3.6 + i * 0.3, 1.4 + i * 0.2, 0.55 + i * 0.02);
+    addFieldLine(4.2 + i * 0.3, 2.2 + i * 0.2, -0.55 - i * 0.02);
+    addFieldLine(4.2 + i * 0.3, 2.2 + i * 0.2, 0.55 + i * 0.02);
 }
 
 function makeMoon(radius, color, seed) {
