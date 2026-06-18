@@ -99,6 +99,46 @@ body {
     text-align: right;
 }
 
+.info-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.info-link:hover {
+    color: var(--soft);
+}
+
+.info-shell {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100svh;
+    background:
+        linear-gradient(140deg, rgba(184, 95, 61, 0.18), transparent 38rem),
+        linear-gradient(180deg, #15120f 0%, #0d0d0c 100%);
+    overflow-y: auto;
+}
+
+.info-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(24px, 6vw, 64px);
+    line-height: 1.8;
+}
+
+.info-content h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin: 0 0 1.5rem;
+}
+
+.info-content p {
+    color: var(--muted);
+}
+
 .control-panel {
     display: flex;
     flex-direction: column;
