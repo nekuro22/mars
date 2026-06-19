@@ -14,7 +14,7 @@
             <!-- Markdown content will be loaded here -->
         </div>
     </main>
-    <div class="ai-notice">3D-Modell KI-generiert &middot; nur zur Visualisierung</div>
+    <div class="ai-notice">3D-Modell KI-generiert &middot; nur zur Visualisierung &middot; <a href="https://leidert.org/info/impressum/">Impressum</a></div>
 
     <script type="module">
         import { marked } from 'https://cdn.jsdelivr.net/npm/marked@11.1.1/+esm';
@@ -31,11 +31,9 @@
                 backLinkDiv.className = 'back-link';
                 backLinkDiv.innerHTML = `
                     <a href="https://example.com">Hier kommt noch ein Kahoot</a>
-                    <div style="margin-top: 20px;">
-                        <a href="index.html">&larr; Zurück zur Simulation</a>
-                        <a href="ai-info.html">&rarr; KI-Info</a>
-                        <a href="https://nekuro22.github.io/mars">Fallback</a>
-                    </div>
+                    <a href="index.html">&larr; Zurück zur Simulation</a>
+                    <a href="ai-info.html">&rarr; KI-Info</a>
+                    <a href="https://nekuro22.github.io/mars">Fallback</a>
                 `;
                 contentDiv.appendChild(backLinkDiv);
             })

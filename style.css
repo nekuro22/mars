@@ -144,16 +144,24 @@ body {
     display: flex;
     gap: 1.2rem;
     flex-wrap: wrap;
+    align-items: stretch;
 }
 
 .back-link a {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--line);
+    border-radius: 6px;
     color: var(--muted);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s, background 0.2s;
 }
 
 .back-link a:hover {
     color: var(--soft);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .control-panel {
