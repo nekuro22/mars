@@ -99,6 +99,17 @@ body {
     text-align: right;
 }
 
+.ai-notice a {
+    pointer-events: auto;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ai-notice a:hover {
+    opacity: 1;
+}
+
 .info-link {
     display: inline-block;
     margin-top: 1rem;
