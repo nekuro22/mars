@@ -653,7 +653,7 @@ function animate() {
 }
 
 async function loadTexts() {
-    const res = await fetch("texts.json");
+    const res = await fetch('https://raw.githubusercontent.com/nekuro22/leidert.org/refs/heads/main/mars/texts.json');
     texts = await res.json();
     stages = texts.stages;
 
