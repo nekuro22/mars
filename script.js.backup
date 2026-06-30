@@ -1,5 +1,4 @@
-import * as THREE from "three";
-import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
 
 const canvas = document.querySelector("#marsCanvas");
 const slider = document.querySelector("#terraformSlider");
@@ -21,17 +20,6 @@ let stages = [];
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-const labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-labelRenderer.domElement.style.position = 'absolute';
-labelRenderer.domElement.style.top = '0';
-labelRenderer.domElement.style.left = '0';
-labelRenderer.domElement.style.pointerEvents = 'none';
-labelRenderer.domElement.style.fontFamily = 'Inter, ui-sans-serif, system-ui, sans-serif';
-labelRenderer.domElement.style.fontSize = '14px';
-labelRenderer.domElement.style.fontWeight = '600';
-canvas.parentElement.appendChild(labelRenderer.domElement);
 
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x080807, 0.025);
@@ -386,7 +374,6 @@ plasmaCore.scale.y = 0.7;
 plasmaGroup.add(plasmaCore);
 
 const fieldLineMaterials = [];
-const fieldLineMarkers = [];
 function addFieldLine(width, height, z, color = 0x22d8c7) {
     const points = [];
     for (let i = 0; i <= 180; i++) {
@@ -403,107 +390,12 @@ function addFieldLine(width, height, z, color = 0x22d8c7) {
     const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), material);
     fieldLineMaterials.push(material);
     plasmaGroup.add(line);
-
-    const positions = line.geometry.attributes.position.array;
-    const total = positions.length / 3;
-    for (let j = 0; j < 3; j++) {
-        const t = (j + 1) / 4;
-        const idx = Math.floor(t * (total - 1));
-        const idx2 = Math.min(idx + 1, total - 1);
-        const px = positions[idx * 3], py = positions[idx * 3 + 1], pz = positions[idx * 3 + 2];
-        const nx = positions[idx2 * 3], ny = positions[idx2 * 3 + 1], nz = positions[idx2 * 3 + 2];
-        const dir = new THREE.Vector3(nx - px, ny - py, nz - pz).normalize();
-        const cone = new THREE.Mesh(
-            new THREE.ConeGeometry(0.045, 0.11, 6),
-            new THREE.MeshBasicMaterial({
-                color,
-                transparent: true,
-                opacity: 0,
-                depthWrite: false
-            })
-        );
-        cone.position.set(px, py, pz);
-        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-        plasmaGroup.add(cone);
-        fieldLineMarkers.push(cone);
-    }
 }
 
 for (let i = 0; i < 7; i++) {
     addFieldLine(4.2 + i * 0.3, 2.2 + i * 0.2, -0.55 - i * 0.02);
     addFieldLine(4.2 + i * 0.3, 2.2 + i * 0.2, 0.55 + i * 0.02);
 }
-
-const torusDisc = new THREE.Mesh(
-    new THREE.RingGeometry(2.8, 4.6, 64),
-    new THREE.MeshBasicMaterial({
-        color: 0x000000,
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide,
-        depthWrite: false
-    })
-);
-torusDisc.scale.y = 0.7;
-torusDisc.renderOrder = -1;
-plasmaGroup.add(torusDisc);
-
-const deimosLineGeo = new THREE.BufferGeometry();
-const deimosLinePos = new Float32Array(6);
-deimosLineGeo.setAttribute('position', new THREE.BufferAttribute(deimosLinePos, 3));
-const deimosLineMat = new THREE.LineBasicMaterial({
-    color: 0xffffff, transparent: true, opacity: 0, depthWrite: false
-});
-const deimosLine = new THREE.Line(deimosLineGeo, deimosLineMat);
-plasmaGroup.add(deimosLine);
-
-const phobosLineGeo = new THREE.BufferGeometry();
-const phobosLinePos = new Float32Array(6);
-phobosLineGeo.setAttribute('position', new THREE.BufferAttribute(phobosLinePos, 3));
-const phobosLineMat = new THREE.LineBasicMaterial({
-    color: 0xffffff, transparent: true, opacity: 0, depthWrite: false
-});
-const phobosLine = new THREE.Line(phobosLineGeo, phobosLineMat);
-plasmaGroup.add(phobosLine);
-
-const labelGroup = new THREE.Group();
-root.add(labelGroup);
-
-function makeLabel(text, x, y, z, fontSize = '14px', color = '#22d8c7') {
-    const div = document.createElement('div');
-    div.textContent = text;
-    div.style.color = color;
-    div.style.fontFamily = 'Inter, ui-sans-serif, system-ui, sans-serif';
-    div.style.fontSize = fontSize;
-    div.style.fontWeight = '600';
-    div.style.textShadow = '0 0 8px rgba(0,0,0,0.8), 0 0 4px rgba(0,0,0,0.9)';
-    div.style.pointerEvents = 'none';
-    div.style.userSelect = 'none';
-    const label = new CSS2DObject(div);
-    label.position.set(x, y, z);
-    label.visible = false;
-    labelGroup.add(label);
-    return label;
-}
-
-const plasmaTorusLabel = makeLabel('Plasma torus', 0, -3.4, 2.0);
-const deimosLabel = makeLabel('Deimos', 4.8, 0.6, -1.8, '14px', '#ffffff');
-const phobosLabel = makeLabel('Phobos', 4.6, 0.9, 1.2, '14px', '#ffffff');
-const copyrightLabel = makeLabel('©Ruth Bamford 2021', 5.5, -4.5, 2.0, '11px', '#ffffff');
-
-const _deimosW = new THREE.Vector3();
-const _phobosW = new THREE.Vector3();
-
-const schematicElements = {
-    torusDisc,
-    deimosLine,
-    deimosLineMat,
-    phobosLine,
-    phobosLineMat,
-    labels: [
-        plasmaTorusLabel, deimosLabel, phobosLabel, copyrightLabel
-    ]
-};
 
 function makeMoon(radius, color, seed) {
     const moon = new THREE.Mesh(
@@ -536,7 +428,7 @@ phobosOrbit.rotation.x = -0.12;
 moonGroup.add(phobosOrbit);
 
 const phobos = makeMoon(0.105, 0x9b8d80, 77);
-phobos.position.set(3.8, 0, 0.1);
+phobos.position.set(2.34, 0, 0.1);
 phobos.scale.set(1.55, 0.9, 1.05);
 phobosOrbit.add(phobos);
 
@@ -638,19 +530,6 @@ function updateStage(value) {
         material.color.setHex(currentColor);
         material.opacity = currentOpacity * (0.85 + (index % 2) * 0.15);
     });
-    fieldLineMarkers.forEach((marker, index) => {
-        marker.material.color.setHex(currentColor);
-        marker.material.opacity = currentOpacity * (0.85 + (index % 2) * 0.15) * 2.0;
-    });
-
-    const schematicOpacity = fieldT * (1 - finalT * 0.3);
-    torusDisc.material.opacity = fieldT * 0.6;
-    deimosLineMat.opacity = schematicOpacity * 0.5;
-    phobosLineMat.opacity = schematicOpacity * 0.5;
-    plasmaTorusLabel.visible = fieldT > 0.01;
-    deimosLabel.visible = fieldT > 0.01;
-    phobosLabel.visible = fieldT > 0.01;
-    copyrightLabel.visible = fieldT > 0.01;
     marsMaterial.color.setRGB(
         mix(1, 0.72, oceanT * 0.35 + finalT * 0.2),
         mix(1, 0.86, finalT * 0.36),
@@ -671,7 +550,6 @@ function resize() {
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
     renderer.setSize(width, height, false);
-    labelRenderer.setSize(width, height);
     camera.aspect = width / height;
     const minDistance = width < 720 ? 8.8 : 6.8;
     const maxDistance = width < 720 ? 16.5 : 14.5;
@@ -770,21 +648,7 @@ function animate() {
     deimosOrbit.rotation.z = elapsed * 0.12;
     deimos.rotation.x += 0.004;
     deimos.rotation.y += 0.006;
-
-    deimos.getWorldPosition(_deimosW);
-    const dlp = deimosLine.geometry.attributes.position.array;
-    dlp[0] = _deimosW.x; dlp[1] = _deimosW.y; dlp[2] = _deimosW.z;
-    dlp[3] = _deimosW.x * 0.35; dlp[4] = _deimosW.y * 0.35; dlp[5] = _deimosW.z * 0.35;
-    deimosLine.geometry.attributes.position.needsUpdate = true;
-
-    phobos.getWorldPosition(_phobosW);
-    const plp = phobosLine.geometry.attributes.position.array;
-    plp[0] = _phobosW.x; plp[1] = _phobosW.y; plp[2] = _phobosW.z;
-    plp[3] = _phobosW.x * 0.35; plp[4] = _phobosW.y * 0.35; plp[5] = _phobosW.z * 0.35;
-    phobosLine.geometry.attributes.position.needsUpdate = true;
-
     renderer.render(scene, camera);
-    labelRenderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
 
