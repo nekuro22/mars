@@ -489,8 +489,6 @@ function makeLabel(text, x, y, z, fontSize = '14px', color = '#22d8c7') {
 const plasmaTorusLabel = makeLabel('Plasma torus', 0, -3.4, 2.0);
 const deimosLabel = makeLabel('Deimos', 4.8, 0.6, -1.8, '14px', '#ffffff');
 const phobosLabel = makeLabel('Phobos', 4.6, 0.9, 1.2, '14px', '#ffffff');
-const copyrightLabel = makeLabel('©Ruth Bamford 2021', 5.5, -4.5, 2.0, '11px', '#ffffff');
-
 const _deimosW = new THREE.Vector3();
 const _phobosW = new THREE.Vector3();
 
@@ -501,7 +499,7 @@ const schematicElements = {
     phobosLine,
     phobosLineMat,
     labels: [
-        plasmaTorusLabel, deimosLabel, phobosLabel, copyrightLabel
+        plasmaTorusLabel, deimosLabel, phobosLabel
     ]
 };
 
@@ -650,7 +648,6 @@ function updateStage(value) {
     plasmaTorusLabel.visible = fieldT > 0.01;
     deimosLabel.visible = fieldT > 0.01;
     phobosLabel.visible = fieldT > 0.01;
-    copyrightLabel.visible = fieldT > 0.01;
     marsMaterial.color.setRGB(
         mix(1, 0.72, oceanT * 0.35 + finalT * 0.2),
         mix(1, 0.86, finalT * 0.36),
